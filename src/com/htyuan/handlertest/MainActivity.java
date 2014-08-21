@@ -1,49 +1,19 @@
 package com.htyuan.handlertest;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
-public class MainActivity extends ActionBarActivity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
+public class MainActivity extends ActionBarActivity implements View.OnClickListener{
+	public static final int MSG_DOWNLOAD_FINISH=0X001;
+	
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
@@ -59,6 +29,73 @@ public class MainActivity extends ActionBarActivity {
 					false);
 			return rootView;
 		}
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.container, new PlaceholderFragment()).commit();
+		}
+		
+		HandlerThread thread=new HandlerThread("yzy");  
+		thread.start();
+		
+		mHandler2 = new Handler(thread.getLooper())  
+	    {  
+	      public void handleMessage(Message msg) {
+	        switch(msg.what)  
+	        {  
+	          case MSG_DOWNLOAD_FINISH:  
+	            Log.v("yzy", "handler所在的线程Name是-->"+Thread.currentThread().getName());  
+	            break;  
+	        }  
+	          
+	      };  
+	    };  
+	}
+	
+	Handler mHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_DOWNLOAD_FINISH:
+				Log.v("yzy", "handler所在的线程id是-->"
+						+ Thread.currentThread().getName());
+				break;
+			}
+		}
+	};
+
+	private Handler mHandler2;
+	
+	
+	
+	public void download(View view)  
+	  {  
+	    new Thread()  
+	    {  
+	      public void run() {  
+	        try  
+	        {  
+	          Log.v("yzy", "下载子线程的Name是--->"+Thread.currentThread().getName());  
+	          //在子线程运行，模拟一个下载任务  
+	          Thread.sleep(2000);  
+	          //下载完成后，发送下载完成消息  
+	          mHandler2.sendEmptyMessage(MSG_DOWNLOAD_FINISH);
+	        } catch (InterruptedException e)  
+	        {  
+	          e.printStackTrace();  
+	        }  
+	      };  
+	    }.start();  
+	  } 
+
+	@Override
+	public void onClick(View v) {
+		download(v);
 	}
 
 }
