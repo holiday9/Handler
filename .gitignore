@@ -1,0 +1,10 @@
+bin/
+gen/
+build/
+proguard/
+.svn
+.classpath
+.jupiter
+.project
+.settings/org.eclipse.core.resources.prefs
+.settings/org.eclipse.ltk.core.refactoring.prefs
