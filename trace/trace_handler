@@ -107,3 +107,20 @@ class LooperThread extends Thread {
         // 有且仅有一个Looper．　如果相知可以继续更总
        }
 ​
+
+创建handler时候,时刻记住一个条件,创建的那一个代码是从属于一个线程的.
+? 怎么保证各自线程所使用的handler在各自线程中中被调用.比如主线调用的时候,处理的时候还是主线程.
+Looper.loop()是运行在主线程的.
+
+? 为什么handler包含activity的引用.
+
+
+
+
+
+
+
+
+
+
+
